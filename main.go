@@ -44,7 +44,7 @@ func request(id int) Response {
 	fmt.Println("URL: ", url)
 	res, err := http.Get(url)
 	if err != nil {
-		fmt.Printf("Error while fetching url \"%s\"\nError: \n", url, err)
+		fmt.Printf("Error while fetching url \"%s\"\nError: %+v\n", url, err)
 		return Response{
 			Err: err,
 		}
