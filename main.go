@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"sync"
 )
 
 func main() {
-	const REQ_COUNT = 10
+	const ReqCount = 10
 	var wg sync.WaitGroup
-	responses := make([]Response, REQ_COUNT)
+	responses := make([]Response, ReqCount)
 
-	for i := 0; i < REQ_COUNT; i++ {
+	for i := 0; i < ReqCount; i++ {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
@@ -40,11 +41,18 @@ type Response struct {
 }
 
 func request(id int) Response {
-	url := "https://jsonplaceholder.typicode.com/todos/" + strconv.Itoa(id)
-	fmt.Println("URL: ", url)
-	res, err := http.Get(url)
+	endpoint := "https://jsonplaceholder.typicode.com/todos/" + strconv.Itoa(id)
+	parsedUrl, err := url.Parse(endpoint)
 	if err != nil {
-		fmt.Printf("Error while fetching url \"%s\"\nError: %+v\n", url, err)
+		return Response{
+			Err: err,
+		}
+	}
+	endpoint = parsedUrl.String()
+	fmt.Println("URL: ", endpoint)
+	res, err := http.Get(endpoint)
+	if err != nil {
+		fmt.Printf("Error while fetching url \"%s\"\nError: %+v\n", endpoint, err)
 		return Response{
 			Err: err,
 		}
@@ -77,3 +85,11 @@ func request(id int) Response {
 // Each API call should be executed concurrently, and
 // the program should aggregate the results efficiently.
 // Ensure proper synchronization and handling of errors.
+
+func Fact(num int) int {
+	if num <= 1 {
+		return 1
+	}
+
+	return num * Fact(num-1)
+}
