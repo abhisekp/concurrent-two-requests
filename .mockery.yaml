@@ -1,0 +1,10 @@
+with-expecter: true
+packages:
+  github.com/abhisekp/concurrent-two-requests:
+    # place your package-specific config here
+    config:
+    interfaces:
+      # select the interfaces you want mocked
+      IRequester:
+        # Modify package-level config for this specific interface (if applicable)
+        config:

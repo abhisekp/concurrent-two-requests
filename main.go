@@ -10,23 +10,55 @@ import (
 	"sync"
 )
 
-func main() {
-	const ReqCount = 10
-	var wg sync.WaitGroup
-	responses := make([]Response, ReqCount)
+type IRequester interface {
+	Request(idx int, id int)
+	GetIds() []int
+	GetResponses() []Response
+}
 
-	for i := 0; i < ReqCount; i++ {
+type Requester struct {
+	ids       []int
+	responses []Response
+}
+
+func (r *Requester) Request(idx int, id int) {
+	r.responses[idx] = request(id)
+}
+
+func (r Requester) GetIds() []int {
+	return r.ids
+}
+
+func (r Requester) GetResponses() []Response {
+	return r.responses
+}
+
+func main() {
+	ids := []int{1, 2, 12, 31}
+
+	requester := Requester{
+		ids:       ids,
+		responses: make([]Response, len(ids)),
+	}
+	RunParallel(&requester)
+}
+
+func RunParallel(requester IRequester) {
+	var wg sync.WaitGroup
+
+	for idx, id := range requester.GetIds() {
 		wg.Add(1)
-		go func(i int) {
+		idx := idx
+		id := id
+		go func() {
 			defer wg.Done()
-			response := request(i + 1)
-			responses[i] = response
-		}(i)
+			requester.Request(idx, id)
+		}()
 	}
 
 	wg.Wait()
 
-	resp, err := json.MarshalIndent(responses, "", "  ")
+	resp, err := json.MarshalIndent(requester.GetResponses(), "", "  ")
 	if err != nil {
 		return
 	}

@@ -5,6 +5,15 @@ import (
 	"testing"
 )
 
+/*
+func TestMain(t *testing.T) {
+	t.Run("Main", func(t *testing.T) {
+		// requester := req
+
+		main()
+	})
+}*/
+
 func TestFactorial(t *testing.T) {
 	tests := []struct {
 		Name     string
@@ -58,7 +67,7 @@ func BenchmarkFact(b *testing.B) {
 			Expected: 120,
 		},
 	}
-	
+
 	for _, test := range tests {
 		b.Run(test.Name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {

@@ -39,3 +39,4 @@ go.work
 ### CUSTOM IGNORES ###
 temp/
 tmp/
+dist/
